@@ -1,0 +1,277 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #243047;
+    line-height: 1.6;
+}
+
+/* Navigation */
+
+.navbar {
+    background: #ffffff;
+    padding: 18px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+    color: #1769aa;
+}
+
+.navbar nav {
+    display: flex;
+    gap: 25px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #26384d;
+    font-weight: 600;
+}
+
+.navbar a:hover {
+    color: #1769aa;
+}
+
+/* Hero */
+
+.hero {
+    min-height: 350px;
+    background: linear-gradient(120deg, #155e9a, #2689c9);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.hero-content h1 {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+
+.hero-content p {
+    font-size: 18px;
+    margin-bottom: 28px;
+}
+
+.hero-button {
+    display: inline-block;
+    background: white;
+    color: #1769aa;
+    padding: 12px 25px;
+    border-radius: 7px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.hero-button:hover {
+    background: #e8f2fb;
+}
+
+/* Main content */
+
+.container {
+    width: 90%;
+    max-width: 850px;
+    margin: 45px auto;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+}
+
+.card h2 {
+    color: #1769aa;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #697586;
+    margin-bottom: 25px;
+}
+
+/* Forms */
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ccd5df;
+    border-radius: 7px;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: #2689c9;
+    box-shadow: 0 0 0 3px rgba(38,137,201,0.12);
+}
+
+.primary-button {
+    background: #1769aa;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 7px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.primary-button:hover {
+    background: #104f85;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 7px;
+    overflow-wrap: anywhere;
+}
+
+.result:empty {
+    display: none;
+}
+
+/* Footer */
+
+footer {
+    background: #18354f;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+/* Mobile responsive */
+
+@media (max-width: 650px) {
+    .navbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .navbar nav {
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero-content h1 {
+        font-size: 30px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+}
+/* ADMIN PANEL */
+
+.admin-section {
+    margin-top: 30px;
+}
+
+.admin-section h2 {
+    margin-bottom: 10px;
+}
+
+#adminComplaints {
+    margin-top: 25px;
+}
+
+.admin-complaint-card {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.admin-complaint-card h3 {
+    color: #263b5e;
+    margin-bottom: 15px;
+}
+
+.admin-complaint-card p {
+    margin: 10px 0;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.admin-complaint-card label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+.admin-complaint-card select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.admin-complaint-card button {
+    margin-bottom: 10px;
+}
+
+#adminMessage {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+
+    .admin-complaint-card {
+        padding: 15px;
+    }
+
+    .navbar nav {
+        flex-wrap: wrap;
+    }
+
+}
