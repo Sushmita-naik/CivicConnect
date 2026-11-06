@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from backend.database import get_db
 from backend.models import User, UserSession
 
+
 router = APIRouter(
     prefix="/api/auth",
     tags=["Authentication"]
@@ -20,34 +21,49 @@ SESSION_COOKIE = "civicconnect_session"
 SESSION_DAYS = 7
 
 
+# ---------------- PASSWORD FUNCTIONS ----------------
+
 def hash_password(password):
     salt = secrets.token_hex(16)
+
     hashed = hashlib.pbkdf2_hmac(
         "sha256",
         password.encode(),
         bytes.fromhex(salt),
         310000
     ).hex()
+
     return f"{salt}${hashed}"
 
 
 def verify_password(password, stored_hash):
     try:
         salt, expected_hash = stored_hash.split("$")
+
         actual_hash = hashlib.pbkdf2_hmac(
             "sha256",
             password.encode(),
             bytes.fromhex(salt),
             310000
         ).hex()
-        return secrets.compare_digest(actual_hash, expected_hash)
+
+        return secrets.compare_digest(
+            actual_hash,
+            expected_hash
+        )
+
     except (ValueError, TypeError):
         return False
 
 
+# ---------------- SESSION FUNCTIONS ----------------
+
 def make_session(response, user, db):
     token = secrets.token_urlsafe(32)
-    token_hash = hashlib.sha256(token.encode()).hexdigest()
+
+    token_hash = hashlib.sha256(
+        token.encode()
+    ).hexdigest()
 
     session = UserSession(
         user_id=user.id,
@@ -69,24 +85,15 @@ def make_session(response, user, db):
     )
 
 
-def user_data(user):
-    return {
-        "id": user.id,
-        "full_name": user.full_name,
-        "email": user.email,
-        "phone": user.phone,
-        "location": user.location,
-        "role": user.role
-    }
-
-
 def get_logged_in_user(request, db):
     token = request.cookies.get(SESSION_COOKIE)
 
     if not token:
         return None
 
-    token_hash = hashlib.sha256(token.encode()).hexdigest()
+    token_hash = hashlib.sha256(
+        token.encode()
+    ).hexdigest()
 
     session = db.query(UserSession).filter(
         UserSession.token_hash == token_hash
@@ -105,6 +112,19 @@ def get_logged_in_user(request, db):
     ).first()
 
 
+def user_data(user):
+    return {
+        "id": user.id,
+        "full_name": user.full_name,
+        "email": user.email,
+        "phone": user.phone,
+        "location": user.location,
+        "role": user.role
+    }
+
+
+# ---------------- REQUEST MODELS ----------------
+
 class RegisterRequest(BaseModel):
     full_name: str = Field(min_length=2, max_length=120)
     email: str
@@ -119,14 +139,21 @@ class LoginRequest(BaseModel):
     password: str
 
 
+# ---------------- CITIZEN REGISTRATION ----------------
+
 @router.post("/register")
-def register(data: RegisterRequest, db: Session = Depends(get_db)):
+def register(
+    data: RegisterRequest,
+    db: Session = Depends(get_db)
+):
     email = data.email.strip().lower()
 
     if "@" not in email or "." not in email.split("@")[-1]:
         return JSONResponse(
             status_code=400,
-            content={"error": "Enter a valid email address."}
+            content={
+                "error": "Enter a valid email address."
+            }
         )
 
     if data.password != data.confirm_password:
@@ -167,8 +194,12 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
     db.add(user)
     db.commit()
 
-    return {"message": "Account created successfully."}
+    return {
+        "message": "Account created successfully."
+    }
 
+
+# ---------------- CITIZEN LOGIN ----------------
 
 @router.post("/login")
 def citizen_login(
@@ -183,18 +214,30 @@ def citizen_login(
     if not user or user.role != "citizen":
         return JSONResponse(
             status_code=401,
-            content={"error": "Invalid email or password."}
+            content={
+                "error": "Invalid email or password."
+            }
         )
 
-    if not verify_password(data.password, user.password_hash):
+    if not verify_password(
+        data.password,
+        user.password_hash
+    ):
         return JSONResponse(
             status_code=401,
-            content={"error": "Invalid email or password."}
+            content={
+                "error": "Invalid email or password."
+            }
         )
 
     make_session(response, user, db)
-    return {"user": user_data(user)}
 
+    return {
+        "user": user_data(user)
+    }
+
+
+# ---------------- ADMIN LOGIN ----------------
 
 @router.post("/admin-login")
 def admin_login(
@@ -209,18 +252,30 @@ def admin_login(
     if not user or user.role != "admin":
         return JSONResponse(
             status_code=401,
-            content={"error": "Invalid administrator credentials."}
+            content={
+                "error": "Invalid administrator credentials."
+            }
         )
 
-    if not verify_password(data.password, user.password_hash):
+    if not verify_password(
+        data.password,
+        user.password_hash
+    ):
         return JSONResponse(
             status_code=401,
-            content={"error": "Invalid administrator credentials."}
+            content={
+                "error": "Invalid administrator credentials."
+            }
         )
 
     make_session(response, user, db)
-    return {"user": user_data(user)}
 
+    return {
+        "user": user_data(user)
+    }
+
+
+# ---------------- CURRENT USER ----------------
 
 @router.get("/me")
 def current_user(
@@ -230,10 +285,16 @@ def current_user(
     user = get_logged_in_user(request, db)
 
     if not user:
-        return {"user": None}
+        return {
+            "user": None
+        }
 
-    return {"user": user_data(user)}
+    return {
+        "user": user_data(user)
+    }
 
+
+# ---------------- LOGOUT ----------------
 
 @router.post("/logout")
 def logout(
@@ -244,7 +305,9 @@ def logout(
     token = request.cookies.get(SESSION_COOKIE)
 
     if token:
-        token_hash = hashlib.sha256(token.encode()).hexdigest()
+        token_hash = hashlib.sha256(
+            token.encode()
+        ).hexdigest()
 
         session = db.query(UserSession).filter(
             UserSession.token_hash == token_hash
@@ -261,4 +324,6 @@ def logout(
         samesite="lax"
     )
 
-    return {"message": "Logged out successfully."}
+    return {
+        "message": "Logged out successfully."
+    }
